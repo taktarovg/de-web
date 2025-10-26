@@ -1,0 +1,297 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CheckinType {
+  regular
+  manual
+  reminder
+  session
+
+  @@map("checkin_type")
+}
+
+enum BroadcastStatus {
+  draft
+  scheduled
+  sending
+  completed
+  failed
+
+  @@map("broadcast_status")
+}
+
+model User {
+  id                   String    @id @default(uuid()) @db.Uuid
+  telegramId           BigInt    @unique @map("telegram_id")
+  username             String?
+  firstName            String?   @map("first_name")
+  languageCode         String    @default("ru") @map("language_code")
+  isProgramActive      Boolean   @default(false) @map("is_program_active")
+  programDay           Int       @default(0) @map("program_day")
+  programStartDate     DateTime? @map("program_start_date") @db.Timestamptz(6)
+  totalCheckins        Int       @default(0) @map("total_checkins")
+  currentStreak        Int       @default(0) @map("current_streak")
+  longestStreak        Int       @default(0) @map("longest_streak")
+  lastCheckinDate      DateTime? @map("last_checkin_date") @db.Timestamptz(6)
+  reminderEnabled      Boolean   @default(false) @map("reminder_enabled")
+  reminderTime         String    @default("09:00") @map("reminder_time")
+  reminderTimezone     String    @default("Europe/Moscow") @map("reminder_timezone")
+  notificationsEnabled Boolean   @default(true) @map("notifications_enabled")
+  dataExportFormat     String    @default("csv") @map("data_export_format")
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  analyses           Analysis[]
+  courseProgress     CourseProgress[]
+  sessions           Session[]
+  reminders          Reminder[]
+  challengeProgress  ChallengeProgress[]
+  challengeStories   ChallengeStory[]
+  analytics          UserAnalytics[]
+  broadcastDeliveries BroadcastDelivery[]
+
+  @@map("users")
+}
+
+model Emotion {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  emoji       String
+  category    String
+  level       Int
+  sortOrder   Int      @default(0) @map("sort_order")
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  analyses Analysis[]
+
+  @@map("emotions")
+}
+
+model EmotionCategory {
+  id          String    @id @default(uuid()) @db.Uuid
+  name        String
+  levelMin    Int       @map("level_min")
+  levelMax    Int       @map("level_max")
+  emoji       String
+  description String?
+  colorHex    String?   @map("color_hex")
+  sortOrder   Int?      @map("sort_order")
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("emotion_categories")
+}
+
+model Analysis {
+  id                  String       @id @default(uuid()) @db.Uuid
+  userId              String       @map("user_id") @db.Uuid
+  emotionId           String?      @map("emotion_id") @db.Uuid
+  emotionLevel        Int?         @map("emotion_level")
+  emotionCategory     String?      @map("emotion_category")
+  customEmotionText   String?      @map("custom_emotion_text")
+  situationBrief      String?      @map("situation_brief")
+  acceptanceRating    Int?         @map("acceptance_rating")
+  releaseRating       Int?         @map("release_rating")
+  acceptanceTechnique String?      @map("acceptance_technique")
+  releaseTechnique    String?      @map("release_technique")
+  notes               String?
+  analysisType        CheckinType? @map("analysis_type")
+  responseTimeSeconds Int?         @map("response_time_seconds")
+  reminderId          String?      @map("reminder_id") @db.Uuid
+  createdAt           DateTime?    @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emotion Emotion? @relation(fields: [emotionId], references: [id])
+
+  @@index([userId])
+  @@index([emotionId])
+  @@index([createdAt])
+  @@map("analyses")
+}
+
+model CourseProgress {
+  id                   String    @id @default(uuid()) @db.Uuid
+  userId               String    @map("user_id") @db.Uuid
+  currentDay           Int       @default(1) @map("current_day")
+  completedDays        Int[]     @default([]) @map("completed_days")
+  isActive             Boolean   @default(true) @map("is_active")
+  startedAt            DateTime  @default(now()) @map("started_at") @db.Timestamptz(6)
+  completedAt          DateTime? @map("completed_at") @db.Timestamptz(6)
+  lastAccessedAt       DateTime  @default(now()) @map("last_accessed_at") @db.Timestamptz(6)
+  completionPercentage Int       @default(0) @map("completion_percentage")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+  @@index([userId])
+  @@map("course_progress")
+}
+
+model Session {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  step        Int       @default(1)
+  situation   String?
+  emotion     String?
+  desire      String?
+  resistance  String?
+  role        String?
+  need        String?
+  complaints  String?
+  gratitude   String?
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Reminder {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  type       String
+  time       String
+  timezone   String    @default("Europe/Moscow")
+  isActive   Boolean   @default(true) @map("is_active")
+  lastSentAt DateTime? @map("last_sent_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@map("reminders")
+}
+
+model Specialist {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String
+  speciality   String
+  bio          String?
+  contactInfo  String   @map("contact_info")
+  telegramLink String?  @map("telegram_link")
+  isActive     Boolean  @default(true) @map("is_active")
+  sortOrder    Int      @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("specialists")
+}
+
+model ChallengeProgress {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  challengeType String    @map("challenge_type")
+  currentDay    Int       @default(1) @map("current_day")
+  completedDays Int[]     @default([]) @map("completed_days")
+  isActive      Boolean   @default(true) @map("is_active")
+  startedAt     DateTime  @default(now()) @map("started_at") @db.Timestamptz(6)
+  completedAt   DateTime? @map("completed_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("challenge_progress")
+}
+
+model ChallengeStory {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  day         Int
+  title       String
+  content     String
+  mediaUrl    String?  @map("media_url")
+  isPublished Boolean  @default(false) @map("is_published")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("challenge_stories")
+}
+
+model UserAnalytics {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  date             DateTime @default(now()) @db.Timestamptz(6)
+  checkinsCount    Int      @default(0) @map("checkins_count")
+  averageLevel     Float    @default(0) @map("average_level")
+  topEmotion       String?  @map("top_emotion")
+  dominantCategory String?  @map("dominant_category")
+  streakDays       Int      @default(0) @map("streak_days")
+  calculatedAt     DateTime @default(now()) @map("calculated_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+  @@map("user_analytics")
+}
+
+model SystemLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  level     String
+  message   String
+  context   Json?
+  timestamp DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([level])
+  @@index([timestamp])
+  @@map("system_logs")
+}
+
+model Broadcast {
+  id            String           @id @default(uuid()) @db.Uuid
+  title         String           @db.VarChar(255)
+  message       String
+  imageUrl      String?          @map("image_url")
+  buttonText    String?          @map("button_text") @db.VarChar(100)
+  buttonUrl     String?          @map("button_url")
+  status        BroadcastStatus  @default(draft)
+  scheduledAt   DateTime?        @map("scheduled_at") @db.Timestamptz(6)
+  startedAt     DateTime?        @map("started_at") @db.Timestamptz(6)
+  completedAt   DateTime?        @map("completed_at") @db.Timestamptz(6)
+  totalUsers    Int              @default(0) @map("total_users")
+  sentCount     Int              @default(0) @map("sent_count")
+  failedCount   Int              @default(0) @map("failed_count")
+  successRate   Decimal          @default(0) @map("success_rate") @db.Decimal(5, 2)
+  targetFilters Json             @default("{}") @map("target_filters")
+  createdBy     String?          @map("created_by") @db.VarChar(100)
+  createdAt     DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  deliveries BroadcastDelivery[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([scheduledAt])
+  @@map("broadcasts")
+}
+
+model BroadcastDelivery {
+  id           String    @id @default(uuid()) @db.Uuid
+  broadcastId  String    @map("broadcast_id") @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  delivered    Boolean   @default(false)
+  deliveredAt  DateTime? @map("delivered_at") @db.Timestamptz(6)
+  errorMessage String?   @map("error_message")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  broadcast Broadcast @relation(fields: [broadcastId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([broadcastId, userId])
+  @@index([broadcastId])
+  @@index([userId])
+  @@index([delivered])
+  @@map("broadcast_deliveries")
+}
