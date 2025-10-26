@@ -18,7 +18,13 @@ async function getUsers() {
       lastCheckinDate: true,
     },
   })
-  return users
+  // Convert bigint telegramId to string
+  return users.map(user => ({
+    ...user,
+    telegramId: user.telegramId.toString(),
+    username: user.username || '',
+    firstName: user.firstName || '',
+  }))
 }
 
 async function getUserStats() {
