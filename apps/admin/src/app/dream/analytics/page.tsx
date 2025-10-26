@@ -160,10 +160,12 @@ async function getStats() {
   return {
     totalCount,
     avgLevel: Math.round(avgLevel._avg.emotionLevel || 0),
-    categoryDist: categoryDist.map(c => ({
-      category: c.emotionCategory,
-      count: c._count.id
-    }))
+    categoryDist: categoryDist
+      .filter(c => c.emotionCategory !== null)
+      .map(c => ({
+        category: c.emotionCategory as string,
+        count: c._count.id
+      }))
   }
 }
 
