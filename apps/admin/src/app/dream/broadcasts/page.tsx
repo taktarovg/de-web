@@ -27,9 +27,9 @@ async function getBroadcastStats() {
     _sum: { sentCount: true }
   })
 
-  const totalUsers = await prisma.user.count({
-    where: { notificationsEnabled: true }
-  })
+  const totalUsers = await prisma.user.count()
+  // TODO: Add notificationsEnabled filter when column exists
+  // where: { notificationsEnabled: true }
 
   return {
     total,
