@@ -24,7 +24,13 @@ async function getCategories() {
   const categories = await prisma.emotionCategory.findMany({
     orderBy: { sortOrder: 'asc' },
   })
-  return categories
+  // Map and handle null values
+  return categories.map(c => ({
+    ...c,
+    description: c.description || '',
+    sortOrder: c.sortOrder || 0,
+    colorHex: c.colorHex || '#000000',
+  }))
 }
 
 async function getEmotionStats() {
