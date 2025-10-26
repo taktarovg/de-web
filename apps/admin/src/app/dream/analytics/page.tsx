@@ -96,7 +96,7 @@ async function getTopEmotions() {
   })
 
   // Get emotion details
-  const emotionIds = topEmotions.map(e => e.emotionId)
+  const emotionIds = topEmotions.map(e => e.emotionId).filter((id): id is string => id !== null)
   const emotions = await prisma.emotion.findMany({
     where: {
       id: {
