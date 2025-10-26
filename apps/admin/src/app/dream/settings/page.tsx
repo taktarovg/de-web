@@ -119,8 +119,8 @@ async function getFileLogs() {
     const errorLogPath = path.join(logsDir, 'error.log')
     const combinedLogPath = path.join(logsDir, 'combined.log')
     
-    let errorLogs = []
-    let combinedLogs = []
+    let errorLogs: string[] = []
+    let combinedLogs: string[] = []
     
     if (fs.existsSync(errorLogPath)) {
       const errorContent = fs.readFileSync(errorLogPath, 'utf-8')
