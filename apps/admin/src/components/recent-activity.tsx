@@ -41,7 +41,7 @@ export async function RecentActivity() {
               Эмоция: {activity.emotion?.name || 'не указана'}
             </p>
             <p className="text-xs text-slate-400 mt-1">
-              {formatDistanceToNow(activity.createdAt, { addSuffix: true, locale: ru })}
+              {activity.createdAt ? formatDistanceToNow(activity.createdAt, { addSuffix: true, locale: ru }) : 'дата неизвестна'}
             </p>
           </div>
           <div className="text-sm font-medium text-slate-600">
