@@ -22,7 +22,7 @@ async function getActivityData() {
 
   // Group by date
   const grouped = analyses.reduce((acc, item) => {
-    if (!item.createdAt) return acc; // Skip if createdAt is null
+    if (!item.createdAt || item.emotionLevel === null) return acc; // Skip if createdAt or emotionLevel is null
     const date = format(item.createdAt, 'yyyy-MM-dd')
     if (!acc[date]) {
       acc[date] = { count: 0, totalLevel: 0 }
@@ -69,7 +69,7 @@ async function getLevelsDistribution() {
 
   return ranges.map(range => ({
     range: range.label,
-    count: analyses.filter(a => a.emotionLevel >= range.min && a.emotionLevel <= range.max).length,
+    count: analyses.filter(a => a.emotionLevel !== null && a.emotionLevel >= range.min && a.emotionLevel <= range.max).length,
     color: range.color
   }))
 }
