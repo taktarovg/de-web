@@ -22,6 +22,7 @@ async function getActivityData() {
 
   // Group by date
   const grouped = analyses.reduce((acc, item) => {
+    if (!item.createdAt) return acc; // Skip if createdAt is null
     const date = format(item.createdAt, 'yyyy-MM-dd')
     if (!acc[date]) {
       acc[date] = { count: 0, totalLevel: 0 }
