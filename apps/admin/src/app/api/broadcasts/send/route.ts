@@ -32,11 +32,8 @@ export async function POST(request: Request) {
       )
     }
 
-    // Получаем всех пользователей с включёнными уведомлениями
+    // Получаем всех активных пользователей
     const users = await prisma.user.findMany({
-      where: {
-        notificationsEnabled: true,
-      },
       select: {
         id: true,
         telegramId: true,
