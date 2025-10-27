@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         status: messageStatus,
         sentAt: new Date(),
         errorMessage: errorMessage,
-        metadata: template ? { template } : null,
+        ...(template && { metadata: { template } }), // Условно добавляем metadata только если есть template
       },
       include: {
         user: {
