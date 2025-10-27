@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, Calendar, Flame, TrendingUp, Heart, BarChart3 } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { SendMessageDialog } from '@/components/users/send-message-dialog'
 import { Badge } from '@/components/ui/badge'
 import { 
   UserHeader,
@@ -55,13 +56,20 @@ export default async function UserDetailPage({ params }: PageProps) {
 
   return (
     <div className="p-8 space-y-6">
-      {/* Back Button */}
-      <Link href="/dream/users">
-        <Button variant="ghost" size="sm" className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Назад к списку пользователей
-        </Button>
-      </Link>
+      {/* Header with Back Button and Send Message */}
+      <div className="flex items-center justify-between mb-6">
+        <Link href="/dream/users">
+          <Button variant="ghost" size="sm">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Назад к списку пользователей
+          </Button>
+        </Link>
+        
+        <SendMessageDialog 
+          telegramId={params.telegramId} 
+          userName={user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : undefined}
+        />
+      </div>
 
       {/* User Header */}
       <UserHeader user={user} />
