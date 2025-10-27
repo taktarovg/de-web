@@ -46,3 +46,5 @@ packages/database/.env
 *~
 
 docs
+
+sql-migrations

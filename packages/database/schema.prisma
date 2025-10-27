@@ -26,35 +26,59 @@ enum BroadcastStatus {
   @@map("broadcast_status")
 }
 
-model User {
-  id                   String    @id @default(uuid()) @db.Uuid
-  telegramId           BigInt    @unique @map("telegram_id")
-  username             String?
-  firstName            String?   @map("first_name")
-  languageCode         String    @default("ru") @map("language_code")
-  isProgramActive      Boolean   @default(false) @map("is_program_active")
-  programDay           Int       @default(0) @map("program_day")
-  programStartDate     DateTime? @map("program_start_date") @db.Timestamptz(6)
-  totalCheckins        Int       @default(0) @map("total_checkins")
-  currentStreak        Int       @default(0) @map("current_streak")
-  longestStreak        Int       @default(0) @map("longest_streak")
-  lastCheckinDate      DateTime? @map("last_checkin_date") @db.Timestamptz(6)
-  reminderEnabled      Boolean   @default(false) @map("reminder_enabled")
-  reminderTime         String    @default("09:00") @map("reminder_time")
-  reminderTimezone     String    @default("Europe/Moscow") @map("reminder_timezone")
-  notificationsEnabled Boolean   @default(true) @map("notifications_enabled")
-  dataExportFormat     String    @default("csv") @map("data_export_format")
-  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt            DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+enum AdminMessageStatus {
+  pending
+  sent
+  failed
 
-  analyses           Analysis[]
-  courseProgress     CourseProgress[]
-  sessions           Session[]
-  reminders          Reminder[]
-  challengeProgress  ChallengeProgress[]
-  challengeStories   ChallengeStory[]
-  analytics          UserAnalytics[]
+  @@map("admin_message_status")
+}
+
+model User {
+  id               String    @id @default(uuid()) @db.Uuid
+  telegramId       BigInt    @unique @map("telegram_id")
+  username         String?
+  firstName        String?   @map("first_name")
+  languageCode     String?   @map("language_code")
+  programStartDate DateTime? @map("program_start_date") @db.Date
+  currentMonth     Int?      @map("current_month")
+  currentWeek      Int?      @map("current_week")
+  isProgramActive  Boolean   @default(false) @map("is_program_active")
+  reminderEnabled  Boolean   @default(false) @map("reminder_enabled")
+  reminderCount    Int       @default(0) @map("reminder_count")
+  morningTime      DateTime? @map("morning_time") @db.Time
+  afternoonTime    DateTime? @map("afternoon_time") @db.Time
+  eveningTime      DateTime? @map("evening_time") @db.Time
+  timezone         String?
+  totalCheckins    Int       @default(0) @map("total_checkins")
+  totalSessions    Int       @default(0) @map("total_sessions")
+  currentStreak    Int       @default(0) @map("current_streak")
+  longestStreak    Int       @default(0) @map("longest_streak")
+  lastCheckinDate  DateTime? @map("last_checkin_date") @db.Date
+  specialistId     String?   @map("specialist_id") @db.Uuid
+  allowAnonymousSharing Boolean @default(false) @map("allow_anonymous_sharing")
+  dataProcessingConsent Boolean @default(false) @map("data_processing_consent")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  challengeActive  Boolean   @default(false) @map("challenge_active")
+  challengeStartDate DateTime? @map("challenge_start_date") @db.Date
+  challengeCurrentDay Int?    @map("challenge_current_day")
+  challengeGoal    String?   @map("challenge_goal")
+  storyEnabled     Boolean   @default(false) @map("story_enabled")
+  storiesShared    Int       @default(0) @map("stories_shared")
+  vkId             BigInt?   @map("vk_id")
+  platform         String?   @db.VarChar(50)
+  vkUserInfo       Json?     @map("vk_user_info")
+
+  analyses            Analysis[]
+  courseProgress      CourseProgress[]
+  sessions            Session[]
+  reminders           Reminder[]
+  challengeProgress   ChallengeProgress[]
+  challengeStories    ChallengeStory[]
+  analytics           UserAnalytics[]
   broadcastDeliveries BroadcastDelivery[]
+  adminMessages       AdminMessage[]
 
   @@map("users")
 }
@@ -294,4 +318,24 @@ model BroadcastDelivery {
   @@index([userId])
   @@index([delivered])
   @@map("broadcast_deliveries")
+}
+
+model AdminMessage {
+  id           String             @id @default(uuid()) @db.Uuid
+  userId       String             @map("user_id") @db.Uuid
+  adminId      String?            @map("admin_id") @db.VarChar(100)
+  message      String             @db.Text
+  status       AdminMessageStatus @default(sent)
+  sentAt       DateTime           @default(now()) @map("sent_at") @db.Timestamptz(6)
+  readAt       DateTime?          @map("read_at") @db.Timestamptz(6)
+  errorMessage String?            @map("error_message")
+  metadata     Json?
+  createdAt    DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sentAt])
+  @@index([status])
+  @@map("admin_messages")
 }
