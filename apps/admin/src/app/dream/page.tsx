@@ -3,6 +3,9 @@ import { StatsCard } from '@/components/stats-card'
 import { RecentActivity } from '@/components/recent-activity'
 import { Users, Heart, BookOpen, TrendingUp } from 'lucide-react'
 
+// Отключаем кэширование - данные будут всегда свежими
+export const revalidate = 0
+
 async function getStats() {
   const [totalUsers, totalAnalyses, activeUsers, coursesInProgress] = await Promise.all([
     prisma.user.count(),
