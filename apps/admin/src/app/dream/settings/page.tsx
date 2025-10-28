@@ -1,3 +1,5 @@
+export const revalidate = 0; // Отключаем кэширование
+
 import { PrismaClient } from '@prisma/client'
 import { SettingsPageClient } from '@/components/settings/settings-page-client'
 import fs from 'fs'
