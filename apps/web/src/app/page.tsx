@@ -4,11 +4,16 @@ import { Button } from '@/components/ui/button'
 import { prisma } from '@designemotion/database'
 
 async function getStats() {
-  const [totalUsers, totalAnalyses] = await Promise.all([
-    prisma.user.count(),
-    prisma.analysis.count(),
-  ])
-  return { totalUsers, totalAnalyses, totalEmotions: 108 }
+  try {
+    const [totalUsers, totalAnalyses] = await Promise.all([
+      prisma.user.count(),
+      prisma.analysis.count(),
+    ])
+    return { totalUsers, totalAnalyses, totalEmotions: 108 }
+  } catch (error) {
+    console.error('Failed to fetch stats:', error)
+    return { totalUsers: 0, totalAnalyses: 0, totalEmotions: 108 }
+  }
 }
 
 export default async function HomePage() {
@@ -16,7 +21,6 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-cloud">
-      {/* Header */}
       <header className="border-b border-slate-200 bg-white">
         <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -24,10 +28,10 @@ export default async function HomePage() {
             <span className="font-bold text-xl text-ocean-500">Дизайн Эмоций</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
+            <Link href="/manifest" className="text-ocean-400 hover:text-ocean-600">Манифест</Link>
             <a href="#method" className="text-ocean-400 hover:text-ocean-600">О методе</a>
-            <a href="#course" className="text-ocean-400 hover:text-ocean-600">Курс</a>
+            <Link href="/services" className="text-ocean-400 hover:text-ocean-600">Услуги</Link>
             <Link href="/bot" className="text-ocean-400 hover:text-ocean-600">Telegram-бот</Link>
-            <a href="#contacts" className="text-ocean-400 hover:text-ocean-600">Контакты</a>
           </div>
           <Link href="/dream">
             <Button variant="outline" className="border-calm-500 text-calm-600 hover:bg-calm-50">Вход</Button>
@@ -35,15 +39,13 @@ export default async function HomePage() {
         </nav>
       </header>
 
-      {/* Hero */}
       <section className="container mx-auto px-4 py-20 md:py-32 bg-white">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-calm-500 via-sage-500 to-ocean-500 bg-clip-text text-transparent">
             Не понимай эмоции. Проектируй их.
           </h1>
           <p className="text-xl text-ocean-400 mb-8">
-            Развивайте эмоциональный интеллект через 8-шаговый метод Седона, 
-            шкалу Хокинса и 108 эмоций
+            Развивайте эмоциональный интеллект через 8-шаговый метод Седона, шкалу Хокинса и 108 эмоций
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/bot">
@@ -58,7 +60,6 @@ export default async function HomePage() {
             </a>
           </div>
 
-          {/* Stats */}
           <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
             <div>
               <div className="text-3xl font-bold text-calm-500">{stats.totalUsers}</div>
@@ -76,7 +77,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Features */}
       <section id="method" className="bg-cloud py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-12">
@@ -120,12 +120,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Course */}
       <section id="course" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-ocean-500 mb-4">Курс "Дневник Эмоций"</h2>
+              <h2 className="text-3xl font-bold text-ocean-500 mb-4">Курс &quot;Дневник Эмоций&quot;</h2>
               <p className="text-ocean-400">
                 30 дней практики для трансформации вашего эмоционального опыта
               </p>
@@ -168,15 +167,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="bg-gradient-to-r from-calm-500 via-calm-600 to-sage-500 py-20">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
             Готовы начать трансформацию?
           </h2>
           <p className="text-calm-50 mb-8 max-w-2xl mx-auto">
-            Присоединяйтесь к сотням людей, которые уже изменили свою жизнь 
-            через осознанную работу с эмоциями
+            Присоединяйтесь к сотням людей, которые уже изменили свою жизнь через осознанную работу с эмоциями
           </p>
           <Link href="/bot">
             <Button size="lg" className="bg-white text-calm-600 hover:bg-cloud">
@@ -186,41 +183,57 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer id="contacts" className="border-t border-slate-200 py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Heart className="h-5 w-5 text-calm-500" />
                 <span className="font-bold text-ocean-500">Дизайн Эмоций</span>
               </div>
-              <p className="text-sm text-ocean-400">
+              <p className="text-sm text-ocean-400 mb-4">
                 Платформа для развития эмоционального интеллекта
               </p>
+              <div className="text-xs text-ocean-400">
+                <p>ИП Тактаров Г.В.</p>
+                <p>ОГРНИП 325547600141358</p>
+                <p>ИНН 244400059945</p>
+              </div>
             </div>
 
             <div>
-              <h3 className="font-semibold text-ocean-500 mb-4">Навигация</h3>
+              <h3 className="font-semibold text-ocean-500 mb-4">О проекте</h3>
               <div className="space-y-2 text-sm">
+                <div><Link href="/manifest" className="text-ocean-400 hover:text-ocean-600">Манифест</Link></div>
+                <div><Link href="/taktarov" className="text-ocean-400 hover:text-ocean-600">О создателе</Link></div>
+                <div><Link href="/services" className="text-ocean-400 hover:text-ocean-600">Услуги</Link></div>
                 <div><a href="#method" className="text-ocean-400 hover:text-ocean-600">О методе</a></div>
-                <div><a href="#course" className="text-ocean-400 hover:text-ocean-600">Курс</a></div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-ocean-500 mb-4">Сервис</h3>
+              <div className="space-y-2 text-sm">
                 <div><Link href="/bot" className="text-ocean-400 hover:text-ocean-600">Telegram-бот</Link></div>
+                <div><a href="#course" className="text-ocean-400 hover:text-ocean-600">Курс</a></div>
                 <div><Link href="/dream" className="text-ocean-400 hover:text-ocean-600">Админка</Link></div>
               </div>
             </div>
 
             <div>
-              <h3 className="font-semibold text-ocean-500 mb-4">Контакты</h3>
-              <div className="space-y-2 text-sm text-ocean-400">
-                <div>Email: hello@designemotion.ru</div>
-                <div>Telegram: @Emotiondesignbot</div>
+              <h3 className="font-semibold text-ocean-500 mb-4">Юридическая информация</h3>
+              <div className="space-y-2 text-sm">
+                <div><Link href="/legal/privacy" className="text-ocean-400 hover:text-ocean-600">Политика конфиденциальности</Link></div>
+                <div><Link href="/legal/terms" className="text-ocean-400 hover:text-ocean-600">Пользовательское соглашение</Link></div>
+                <div><Link href="/legal/offer" className="text-ocean-400 hover:text-ocean-600">Договор оферты</Link></div>
+                <div><Link href="/legal/refund" className="text-ocean-400 hover:text-ocean-600">Возврат средств</Link></div>
               </div>
             </div>
           </div>
 
           <div className="mt-8 pt-8 border-t border-slate-200 text-center text-sm text-ocean-400">
-            © 2025 Дизайн Эмоций. Все права защищены.
+            <p>© 2025 ИП Тактаров Георгий Викторович. Все права защищены.</p>
+            <p className="mt-2">Email: hello@designemotion.ru | Telegram: <a href="https://t.me/taktarov" className="hover:text-calm-500">@taktarov</a></p>
           </div>
         </div>
       </footer>
