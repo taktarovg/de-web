@@ -2,6 +2,9 @@ import { prisma } from '@designemotion/database'
 import { AnalyticsPageClient } from '@/components/analytics/analytics-page-client'
 import { subDays, format } from 'date-fns'
 
+// Отключаем кэширование - данные будут всегда свежими
+export const revalidate = 0
+
 async function getActivityData() {
   const thirtyDaysAgo = subDays(new Date(), 30)
   

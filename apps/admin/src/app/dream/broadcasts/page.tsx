@@ -1,6 +1,9 @@
 import { prisma } from '@designemotion/database'
 import { BroadcastsPageClient } from '@/components/broadcasts/broadcasts-page-client'
 
+// Отключаем кэширование - данные будут всегда свежими
+export const revalidate = 0
+
 async function getBroadcasts() {
   const broadcasts = await prisma.broadcast.findMany({
     orderBy: {

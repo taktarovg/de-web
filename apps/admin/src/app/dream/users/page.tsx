@@ -3,6 +3,9 @@ import { Button } from '@/components/ui/button'
 import { Plus, Users as UsersIcon } from 'lucide-react'
 import { UsersTable } from '@/components/users/users-table'
 
+// Отключаем кэширование - данные будут всегда свежими
+export const revalidate = 0
+
 async function getUsers() {
   const users = await prisma.user.findMany({
     orderBy: { createdAt: 'desc' },

@@ -1,6 +1,9 @@
 import { prisma } from '@designemotion/database'
 import { EmotionsPageClient } from '@/components/emotions/emotions-page-client'
 
+// Отключаем кэширование - данные будут всегда свежими
+export const revalidate = 0
+
 async function getEmotions() {
   const emotions = await prisma.emotion.findMany({
     orderBy: [{ category: 'asc' }, { sortOrder: 'asc' }],
