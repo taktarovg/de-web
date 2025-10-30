@@ -2,6 +2,9 @@ import { prisma } from '@designemotion/database'
 import { CoursePageClient } from '@/components/course/course-page-client'
 import { subDays } from 'date-fns'
 
+// Отключаем кэширование - данные будут всегда свежими
+export const revalidate = 0
+
 async function getCourseStats() {
   const [totalEnrolled, activeStudents, completedCourses, avgProgress] = await Promise.all([
     prisma.courseProgress.count(),
