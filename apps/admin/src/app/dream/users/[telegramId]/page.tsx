@@ -12,6 +12,7 @@ import {
   CourseProgressSection,
   EmotionTrendChart
 } from '@/components/users/user-detail'
+import { MessageHistory } from '@/components/users/message-history'
 
 async function getUserDetails(telegramId: string) {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
@@ -168,6 +169,9 @@ export default async function UserDetailPage({ params }: PageProps) {
 
       {/* Recent Analyses Table */}
       <RecentAnalysesTable analyses={recent_analyses} />
+
+      {/* Message History - NEW */}
+      <MessageHistory telegramId={params.telegramId} />
 
       {/* Settings Section */}
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
