@@ -12,6 +12,7 @@ enum CheckinType {
   manual
   reminder
   session
+  widget
 
   @@map("checkin_type")
 }
@@ -338,4 +339,68 @@ model AdminMessage {
   @@index([sentAt])
   @@index([status])
   @@map("admin_messages")
+}
+
+// ============================================
+// NEW MODELS FOR DESIGNEMOTION.RU
+// ============================================
+
+model Application {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  company   String?  @db.VarChar(255)
+  contact   String   @db.VarChar(255)
+  request   String   @db.Text
+  status    String   @default("new") @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@map("applications")
+}
+
+model Booking {
+  id             Int      @id @default(autoincrement())
+  clientName     String   @map("client_name") @db.VarChar(255)
+  clientEmail    String   @map("client_email") @db.VarChar(255)
+  clientTelegram String?  @map("client_telegram") @db.VarChar(255)
+  clientPhone    String?  @map("client_phone") @db.VarChar(50)
+  
+  sessionType    String   @map("session_type") @db.VarChar(50)
+  sessionDate    DateTime @map("session_date")
+  sessionDuration Int     @default(90) @map("session_duration")
+  
+  price          Int
+  status         String   @default("pending") @db.VarChar(50)
+  
+  notes          String?  @db.Text
+  paymentStatus  String   @default("unpaid") @map("payment_status") @db.VarChar(50)
+  paymentMethod  String?  @map("payment_method") @db.VarChar(50)
+  
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([sessionDate])
+  @@index([status])
+  @@index([clientEmail])
+  @@map("bookings")
+}
+
+model AvailableSlot {
+  id              Int      @id @default(autoincrement())
+  slotDate        DateTime @map("slot_date") @db.Date
+  slotTime        DateTime @map("slot_time") @db.Time
+  duration        Int      @default(90)
+  isAvailable     Boolean  @default(true) @map("is_available")
+  maxBookings     Int      @default(1) @map("max_bookings")
+  currentBookings Int      @default(0) @map("current_bookings")
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([slotDate, slotTime])
+  @@index([slotDate])
+  @@index([isAvailable])
+  @@map("available_slots")
 }
