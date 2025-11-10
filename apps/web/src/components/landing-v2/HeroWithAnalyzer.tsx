@@ -19,15 +19,7 @@ export function HeroWithAnalyzer() {
             </p>
           </div>
 
-          {/* Виджет */}
-          <Card className="p-8 md:p-12 shadow-2xl border-2 border-purple-100">
-            <EmotionAnalyzer 
-              context="landing"
-              onComplete={(result) => {
-                console.log('Analysis completed:', result);
-              }}
-            />
-          </Card>
+          
 
           {/* Подсказка */}
           <div className="mt-8 text-center">
