@@ -1,12 +1,9 @@
+'use client';
+
 import { Header, Footer } from '@/components/layout';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Check, ArrowRight } from 'lucide-react';
-
-export const metadata = {
-  title: 'Для лидеров бьюти-индустрии | Дизайн Эмоций',
-  description: 'Персональная программа для руководителей салонов красоты. Ваш салон — отражение вашего состояния.',
-};
 
 export default function BeautyLeadersPage() {
   const pains = [

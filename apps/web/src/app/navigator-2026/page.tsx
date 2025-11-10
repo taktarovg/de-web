@@ -1,12 +1,9 @@
+'use client';
+
 import { Header, Footer } from '@/components/layout';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Shield, CheckCircle2 } from 'lucide-react';
-
-export const metadata = {
-  title: '2026: Протокол Спокойной Силы | Дизайн Эмоций',
-  description: 'Интенсив для лидеров, которые готовятся к турбулентности. Превратите хаос 2026 года в возможности.',
-};
 
 export default function Navigator2026Page() {
   const fears = [

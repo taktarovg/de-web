@@ -7,24 +7,35 @@ import { Users, Heart, BookOpen, TrendingUp } from 'lucide-react'
 export const revalidate = 0
 
 async function getStats() {
-  const [totalUsers, totalAnalyses, activeUsers, coursesInProgress] = await Promise.all([
-    prisma.user.count(),
-    prisma.analysis.count(),
-    prisma.user.count({
-      where: {
-        lastCheckinDate: {
-          gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+  try {
+    const [totalUsers, totalAnalyses, activeUsers, coursesInProgress] = await Promise.all([
+      prisma.user.count(),
+      prisma.analysis.count(),
+      prisma.user.count({
+        where: {
+          lastCheckinDate: {
+            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          },
         },
-      },
-    }),
-    prisma.courseProgress.count({
-      where: {
-        isActive: true,
-      },
-    }),
-  ])
+      }),
+      prisma.courseProgress.count({
+        where: {
+          isActive: true,
+        },
+      }),
+    ])
 
-  return { totalUsers, totalAnalyses, activeUsers, coursesInProgress }
+    return { totalUsers, totalAnalyses, activeUsers, coursesInProgress, error: null }
+  } catch (error) {
+    console.error('Database error:', error)
+    return {
+      totalUsers: 0,
+      totalAnalyses: 0,
+      activeUsers: 0,
+      coursesInProgress: 0,
+      error: 'Failed to fetch stats from database',
+    }
+  }
 }
 
 export default async function DreamDashboard() {
@@ -36,6 +47,14 @@ export default async function DreamDashboard() {
         <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
         <p className="text-slate-600 mt-1">Обзор проекта Дизайн Эмоций</p>
       </div>
+
+      {stats.error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-800 text-sm">
+            ⚠️ Ошибка подключения к базе данных. Проверьте DATABASE_URL в .env
+          </p>
+        </div>
+      )}
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
