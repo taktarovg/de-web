@@ -22,16 +22,7 @@ export function FinalCTASection() {
             </p>
           </div>
 
-          {/* Виджет */}
-          <Card className="p-8 md:p-12 shadow-2xl">
-            <EmotionAnalyzer 
-              context="landing"
-              onComplete={(result) => {
-                console.log('Final CTA analysis completed:', result);
-                // Можно добавить скролл вверх или другую логику
-              }}
-            />
-          </Card>
+          
 
           {/* Подсказка */}
           <div className="mt-8 text-center">
