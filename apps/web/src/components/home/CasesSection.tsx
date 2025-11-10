@@ -1,3 +1,6 @@
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+
 export default function CasesSection() {
   const cases = [
     {
@@ -29,7 +32,7 @@ export default function CasesSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
           {cases.map((caseItem, index) => (
             <div
               key={index}
@@ -74,6 +77,15 @@ export default function CasesSection() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Кнопка "Больше кейсов" */}
+        <div className="text-center">
+          <Link href="/cases">
+            <Button className="bg-bronze hover:bg-bronze-dark text-graphite font-semibold px-8 py-3">
+              Больше кейсов
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

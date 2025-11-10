@@ -267,15 +267,13 @@ export default function GeorgiyPage() {
               <p className="text-graphite/80 mb-3">
                 Моя открытая методология и инструменты для самостоятельной работы:
               </p>
-              <a
-                href="https://diaryofemotions.ru"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link 
+                href="/"
                 className="inline-flex items-center gap-2 text-bronze hover:text-bronze-light text-lg font-medium transition-colors"
               >
                 <span>→</span>
                 <span>diaryofemotions.ru</span>
-              </a>
+              </Link>
               <p className="text-sm text-graphite/60 mt-2">
                 Бесплатный дневник эмоций и анализатор
               </p>
