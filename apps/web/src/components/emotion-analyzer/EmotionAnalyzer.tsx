@@ -205,8 +205,8 @@ export function EmotionAnalyzer({ context = 'landing', userId, onComplete, class
                       addJournalEntry({
                         emotion: result.emotion,
                         goal: goalText,
-                        hawkinsLevel: result.hawkinsLevel,
-                        analysisId: result.analysisId
+                        hawkinsLevel: result.hawkinsLevel
+                        
                       });
                       setSavedToJournal(true);
                     } catch (error) {
