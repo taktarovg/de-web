@@ -4,6 +4,19 @@
 
 @layer base {
   :root {
+    /* Design Emotion Premium Colors */
+    --graphite: #212121;
+    --graphite-dark: #1a1a1a;
+    --graphite-light: #2a2a2a;
+    --ivory: #FDFBF7;
+    --ivory-dark: #F5F3EF;
+    --bronze: #C49A6C;
+    --bronze-light: #D4AB7E;
+    --bronze-dark: #B48A5C;
+    --midnight: #0B2545;
+    --midnight-hover: #0D2F5A;
+
+    /* shadcn/ui compatibility */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -31,7 +44,37 @@
   * {
     @apply border-border;
   }
+  
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Smooth scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Text selection */
+  ::selection {
+    background: var(--bronze);
+    color: var(--graphite);
+  }
+
+  /* Custom scrollbar (опционально) */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--graphite-dark);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--bronze);
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--bronze-light);
   }
 }
