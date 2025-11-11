@@ -68,11 +68,17 @@ export default function SiteManagementPage() {
     setIsGenerating(true);
     try {
       const response = await fetch('/api/site/generate-sitemap', { method: 'POST' });
+      const data = await response.json();
+      
       if (response.ok) {
-        alert('Sitemap успешно сгенерирован!');
+        alert('✅ Sitemap успешно сгенерирован!');
+      } else {
+        alert('❌ Ошибка: ' + (data.error || 'Failed to generate sitemap'));
+        console.error('Sitemap error:', data);
       }
     } catch (error) {
       console.error('Error generating sitemap:', error);
+      alert('❌ Ошибка генерации sitemap');
     } finally {
       setIsGenerating(false);
     }
@@ -82,11 +88,17 @@ export default function SiteManagementPage() {
     setIsGenerating(true);
     try {
       const response = await fetch('/api/site/generate-robots', { method: 'POST' });
+      const data = await response.json();
+      
       if (response.ok) {
-        alert('robots.txt успешно сгенерирован!');
+        alert('✅ robots.txt успешно сгенерирован!');
+      } else {
+        alert('❌ Ошибка: ' + (data.error || 'Failed to generate robots.txt'));
+        console.error('Robots error:', data);
       }
     } catch (error) {
       console.error('Error generating robots.txt:', error);
+      alert('❌ Ошибка генерации robots.txt');
     } finally {
       setIsGenerating(false);
     }

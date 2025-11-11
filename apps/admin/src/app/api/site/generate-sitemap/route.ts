@@ -26,7 +26,6 @@ export async function POST() {
         priority: '0.8',
         lastmod: currentDate,
       },
-      // Добавьте другие страницы по мере создания
     ];
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -43,38 +42,46 @@ ${pages
   .join('\n')}
 </urlset>`;
 
-    // Сохраняем в public папку веб-приложения
-    let publicPath: string;
-    
-    // Пробуем разные пути
+    // Пробуем найти правильный путь
     const cwd = process.cwd();
+    console.log('[Sitemap] Current directory:', cwd);
     
-    if (cwd.includes('apps/admin') || cwd.includes('apps\\admin')) {
-      // Development: C:\dev\de-web\apps\admin
-      publicPath = path.join(cwd, '..', 'web', 'public', 'sitemap.xml');
-    } else if (cwd.includes('admin')) {
-      // Production: /app/admin or similar
-      publicPath = path.join(cwd, '..', 'web', 'public', 'sitemap.xml');
-    } else {
-      // Fallback: assume we're in root
-      publicPath = path.join(cwd, 'apps', 'web', 'public', 'sitemap.xml');
-    }
+    let publicPath: string;
+    let attempts: string[] = [];
+    
+    // Вариант 1: Development (apps/admin -> apps/web/public)
+    const devPath = path.join(cwd, '..', 'web', 'public', 'sitemap.xml');
+    attempts.push(`Dev: ${devPath}`);
+    
+    // Вариант 2: Production root
+    const prodPath = path.join(cwd, 'public', 'sitemap.xml');
+    attempts.push(`Prod: ${prodPath}`);
+    
+    // Вариант 3: Абсолютный путь
+    const absolutePath = '/var/www/designemotion/web/public/sitemap.xml';
+    attempts.push(`Absolute: ${absolutePath}`);
 
+    // Пробуем сохранить
+    publicPath = devPath; // По умолчанию development
+    
+    console.log('[Sitemap] Attempting to write to:', publicPath);
     await writeFile(publicPath, sitemap, 'utf-8');
+    console.log('[Sitemap] Successfully written');
 
     return NextResponse.json({
       success: true,
       message: 'Sitemap успешно сгенерирован',
       path: '/sitemap.xml',
-      debug: { cwd, publicPath },
+      debug: { cwd, publicPath, attempts },
     });
   } catch (error) {
-    console.error('Error generating sitemap:', error);
+    console.error('[Sitemap] Error:', error);
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to generate sitemap',
         details: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
         cwd: process.cwd(),
       },
       { status: 500 }

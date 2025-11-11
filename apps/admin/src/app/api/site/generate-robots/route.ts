@@ -29,34 +29,45 @@ User-agent: Googlebot
 Allow: /
 `;
 
-    // Сохраняем в public папку веб-приложения
-    let publicPath: string;
-    
+    // Пробуем найти правильный путь
     const cwd = process.cwd();
+    console.log('[Robots] Current directory:', cwd);
     
-    if (cwd.includes('apps/admin') || cwd.includes('apps\\admin')) {
-      publicPath = path.join(cwd, '..', 'web', 'public', 'robots.txt');
-    } else if (cwd.includes('admin')) {
-      publicPath = path.join(cwd, '..', 'web', 'public', 'robots.txt');
-    } else {
-      publicPath = path.join(cwd, 'apps', 'web', 'public', 'robots.txt');
-    }
+    let publicPath: string;
+    let attempts: string[] = [];
+    
+    // Вариант 1: Development
+    const devPath = path.join(cwd, '..', 'web', 'public', 'robots.txt');
+    attempts.push(`Dev: ${devPath}`);
+    
+    // Вариант 2: Production
+    const prodPath = path.join(cwd, 'public', 'robots.txt');
+    attempts.push(`Prod: ${prodPath}`);
+    
+    // Вариант 3: Абсолютный
+    const absolutePath = '/var/www/designemotion/web/public/robots.txt';
+    attempts.push(`Absolute: ${absolutePath}`);
 
+    publicPath = devPath;
+    
+    console.log('[Robots] Attempting to write to:', publicPath);
     await writeFile(publicPath, robotsTxt, 'utf-8');
+    console.log('[Robots] Successfully written');
 
     return NextResponse.json({
       success: true,
       message: 'robots.txt успешно сгенерирован',
       path: '/robots.txt',
-      debug: { cwd, publicPath },
+      debug: { cwd, publicPath, attempts },
     });
   } catch (error) {
-    console.error('Error generating robots.txt:', error);
+    console.error('[Robots] Error:', error);
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to generate robots.txt',
         details: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
         cwd: process.cwd(),
       },
       { status: 500 }
