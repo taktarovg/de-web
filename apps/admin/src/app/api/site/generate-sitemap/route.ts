@@ -44,18 +44,39 @@ ${pages
 </urlset>`;
 
     // Сохраняем в public папку веб-приложения
-    const publicPath = path.join(process.cwd(), '..', 'web', 'public', 'sitemap.xml');
+    let publicPath: string;
+    
+    // Пробуем разные пути
+    const cwd = process.cwd();
+    
+    if (cwd.includes('apps/admin') || cwd.includes('apps\\admin')) {
+      // Development: C:\dev\de-web\apps\admin
+      publicPath = path.join(cwd, '..', 'web', 'public', 'sitemap.xml');
+    } else if (cwd.includes('admin')) {
+      // Production: /app/admin or similar
+      publicPath = path.join(cwd, '..', 'web', 'public', 'sitemap.xml');
+    } else {
+      // Fallback: assume we're in root
+      publicPath = path.join(cwd, 'apps', 'web', 'public', 'sitemap.xml');
+    }
+
     await writeFile(publicPath, sitemap, 'utf-8');
 
     return NextResponse.json({
       success: true,
       message: 'Sitemap успешно сгенерирован',
       path: '/sitemap.xml',
+      debug: { cwd, publicPath },
     });
   } catch (error) {
     console.error('Error generating sitemap:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to generate sitemap' },
+      {
+        success: false,
+        error: 'Failed to generate sitemap',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        cwd: process.cwd(),
+      },
       { status: 500 }
     );
   }

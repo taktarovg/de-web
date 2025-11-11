@@ -22,10 +22,33 @@ export default function SiteManagementPage() {
   const [yandexMetrikaId, setYandexMetrikaId] = useState('');
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Загрузка текущих значений из .env
+  // TODO: Сделать API для чтения .env
 
   const handleSaveAnalytics = async () => {
-    // TODO: Save to database or config
-    console.log('Saving analytics:', { yandexMetrikaId, googleAnalyticsId });
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/site/save-analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ yandexMetrikaId, googleAnalyticsId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('✅ ' + data.message);
+      } else {
+        alert('❌ Ошибка: ' + (data.error || 'Failed to save'));
+      }
+    } catch (error) {
+      console.error('Error saving analytics:', error);
+      alert('❌ Ошибка сохранения настроек');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleGenerateSitemap = async () => {
@@ -189,8 +212,15 @@ export default function SiteManagementPage() {
           </Card>
 
           <div className="flex justify-end">
-            <Button onClick={handleSaveAnalytics} size="lg">
-              Сохранить настройки аналитики
+            <Button onClick={handleSaveAnalytics} size="lg" disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                  Сохранение...
+                </>
+              ) : (
+                'Сохранить настройки аналитики'
+              )}
             </Button>
           </div>
         </TabsContent>

@@ -30,18 +30,35 @@ Allow: /
 `;
 
     // Сохраняем в public папку веб-приложения
-    const publicPath = path.join(process.cwd(), '..', 'web', 'public', 'robots.txt');
+    let publicPath: string;
+    
+    const cwd = process.cwd();
+    
+    if (cwd.includes('apps/admin') || cwd.includes('apps\\admin')) {
+      publicPath = path.join(cwd, '..', 'web', 'public', 'robots.txt');
+    } else if (cwd.includes('admin')) {
+      publicPath = path.join(cwd, '..', 'web', 'public', 'robots.txt');
+    } else {
+      publicPath = path.join(cwd, 'apps', 'web', 'public', 'robots.txt');
+    }
+
     await writeFile(publicPath, robotsTxt, 'utf-8');
 
     return NextResponse.json({
       success: true,
       message: 'robots.txt успешно сгенерирован',
       path: '/robots.txt',
+      debug: { cwd, publicPath },
     });
   } catch (error) {
     console.error('Error generating robots.txt:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to generate robots.txt' },
+      {
+        success: false,
+        error: 'Failed to generate robots.txt',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        cwd: process.cwd(),
+      },
       { status: 500 }
     );
   }
