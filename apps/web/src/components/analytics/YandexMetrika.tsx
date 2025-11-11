@@ -1,21 +1,21 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Script from 'next/script';
 
-interface YandexMetrikaProps {
-  id: string;
-}
+export function YandexMetrika() {
+  const [id, setId] = useState<string>('');
 
-export function YandexMetrika({ id }: YandexMetrikaProps) {
   useEffect(() => {
-    // @ts-ignore
-    window.ym = window.ym || function() {
-      // @ts-ignore
-      (window.ym.a = window.ym.a || []).push(arguments);
-    };
-    // @ts-ignore
-    window.ym.l = 1 * new Date();
+    // Загружаем ID с сервера
+    fetch('/api/analytics')
+      .then(res => res.json())
+      .then(data => {
+        if (data.yandexMetrikaId) {
+          setId(data.yandexMetrikaId);
+        }
+      })
+      .catch(err => console.error('Failed to load Yandex Metrika ID:', err));
   }, []);
 
   if (!id) return null;

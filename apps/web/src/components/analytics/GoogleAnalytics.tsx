@@ -1,12 +1,23 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Script from 'next/script';
 
-interface GoogleAnalyticsProps {
-  measurementId: string;
-}
+export function GoogleAnalytics() {
+  const [measurementId, setMeasurementId] = useState<string>('');
 
-export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
+  useEffect(() => {
+    // Загружаем ID с сервера
+    fetch('/api/analytics')
+      .then(res => res.json())
+      .then(data => {
+        if (data.googleAnalyticsId) {
+          setMeasurementId(data.googleAnalyticsId);
+        }
+      })
+      .catch(err => console.error('Failed to load Google Analytics ID:', err));
+  }, []);
+
   if (!measurementId) return null;
 
   return (

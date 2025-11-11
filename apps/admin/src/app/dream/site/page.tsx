@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,9 +23,22 @@ export default function SiteManagementPage() {
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Загрузка текущих значений из .env
-  // TODO: Сделать API для чтения .env
+  // Загрузка текущих значений с сервера
+  useEffect(() => {
+    fetch('/api/analytics')
+      .then(res => res.json())
+      .then(data => {
+        setYandexMetrikaId(data.yandexMetrikaId || '');
+        setGoogleAnalyticsId(data.googleAnalyticsId || '');
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to load analytics settings:', err);
+        setIsLoading(false);
+      });
+  }, []);
 
   const handleSaveAnalytics = async () => {
     setIsSaving(true);
@@ -149,9 +162,9 @@ export default function SiteManagementPage() {
                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
-                    <div>
+                    <div className="flex-1">
                       <p className="text-sm font-medium text-green-900">
-                        Код Яндекс Метрики будет добавлен на сайт
+                        ✅ Активно на сайте
                       </p>
                       <p className="text-xs text-green-700 mt-1">
                         ID: {yandexMetrikaId}
@@ -197,9 +210,9 @@ export default function SiteManagementPage() {
                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
-                    <div>
+                    <div className="flex-1">
                       <p className="text-sm font-medium text-green-900">
-                        Код Google Analytics будет добавлен на сайт
+                        ✅ Активно на сайте
                       </p>
                       <p className="text-xs text-green-700 mt-1">
                         Measurement ID: {googleAnalyticsId}

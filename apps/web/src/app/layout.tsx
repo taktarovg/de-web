@@ -26,19 +26,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // TODO: Получать ID из настроек (БД или env)
-  const YANDEX_METRIKA_ID = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID || '';
-  const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || '';
-
   return (
     <html lang="ru" className="scroll-smooth">
       <body className={inter.className}>
         {children}
         <CookieConsent />
         
-        {/* Аналитика */}
-        {YANDEX_METRIKA_ID && <YandexMetrika id={YANDEX_METRIKA_ID} />}
-        {GOOGLE_ANALYTICS_ID && <GoogleAnalytics measurementId={GOOGLE_ANALYTICS_ID} />}
+        {/* Аналитика - динамическая загрузка */}
+        <YandexMetrika />
+        <GoogleAnalytics />
       </body>
     </html>
   )
