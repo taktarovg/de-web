@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, Users, Heart, BookOpen, BarChart3, Settings, Send, LogOut, Globe } from 'lucide-react'
+import { LayoutDashboard, Users, Heart, BookOpen, BarChart3, Settings, Send, LogOut, Globe, FileText, Calendar } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', href: '/dream', icon: LayoutDashboard },
@@ -13,6 +13,8 @@ const navigation = [
   { name: 'Рассылки', href: '/dream/broadcasts', icon: Send },
   { name: 'Аналитика', href: '/dream/analytics', icon: BarChart3 },
   { name: 'Сайт', href: '/dream/site', icon: Globe },
+  { name: 'Заявки', href: '/dream/applications', icon: FileText },
+  { name: 'Бронирования', href: '/dream/bookings', icon: Calendar },
   { name: 'Настройки', href: '/dream/settings', icon: Settings },
 ]
 
