@@ -55,9 +55,9 @@ interface Category {
   levelMin: number
   levelMax: number
   emoji: string
-  description: string
-  colorHex: string
-  sortOrder: number
+  description?: string | null
+  colorHex?: string | null
+  sortOrder?: number | null
 }
 
 interface EmotionsTableProps {

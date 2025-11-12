@@ -31,7 +31,7 @@ interface Emotion {
   category: string
   level: number
   description?: string | null
-  isActive: boolean
+  isActive: boolean 
 }
 
 interface Category {
@@ -40,6 +40,9 @@ interface Category {
   levelMin: number
   levelMax: number
   emoji: string
+  description?: string | null
+  colorHex?: string | null
+  sortOrder?: number | null
 }
 
 interface EmotionDialogProps {
@@ -47,10 +50,14 @@ interface EmotionDialogProps {
   categories: Category[]
   onSave: (emotion: Partial<Emotion>) => Promise<void>
   trigger?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-export function EmotionDialog({ emotion, categories, onSave, trigger }: EmotionDialogProps) {
-  const [open, setOpen] = React.useState(false)
+export function EmotionDialog({ emotion, categories, onSave, trigger, open: controlledOpen, onOpenChange }: EmotionDialogProps) {
+  const [internalOpen, setInternalOpen] = React.useState(false)
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen
+  const setOpen = onOpenChange || setInternalOpen
   const [loading, setLoading] = React.useState(false)
   const [formData, setFormData] = React.useState<Partial<Emotion>>({
     name: '',
@@ -221,7 +228,7 @@ export function EmotionDialog({ emotion, categories, onSave, trigger }: EmotionD
             {/* Описание */}
             <div className="space-y-2">
               <Label htmlFor="description">
-                Описание эмоции
+                Дополнительное описание
                 <span className="text-xs text-slate-500 font-normal ml-2">
                   (показывается пользователю после анализа)
                 </span>
@@ -231,10 +238,11 @@ export function EmotionDialog({ emotion, categories, onSave, trigger }: EmotionD
                 value={formData.description || ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Опишите эмоцию, что она означает..."
-                rows={3}
+                rows={4}
+                className="resize-none"
               />
               <p className="text-xs text-slate-500">
-                Например: "Состояние радости и удовлетворения от происходящего"
+                💡 Например: "Состояние радости и удовлетворения от происходящего. Энергия на уровне {formData.level} означает..."
               </p>
             </div>
 
