@@ -20,18 +20,24 @@ export default function HeroSection() {
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center">
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-ivory mb-8 leading-tight">
+        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-ivory mb-6 leading-tight">
           Дизайн Эмоций
         </h1>
+
+        <p className="text-2xl md:text-3xl lg:text-4xl font-semibold text-bronze mb-8 leading-tight">
+          Внутреннее состояние —<br className="hidden md:block" />
+          решающее преимущество
+        </p>
 
         {/* Декоративная линия */}
         <div className="flex items-center justify-center mb-8">
           <div className="h-0.5 w-32 md:w-48 bg-bronze" />
         </div>
 
-        <p className="text-lg md:text-xl lg:text-2xl text-ivory/80 max-w-3xl mx-auto mb-12 leading-relaxed">
-          Персональная программа для лидеров,<br className="hidden md:block" />
-          принимающих решения с высокой ценой ошибки
+        <p className="text-lg md:text-xl lg:text-2xl text-ivory/80 max-w-4xl mx-auto mb-12 leading-relaxed">
+          Персональное сопровождение для лидеров,<br className="hidden md:block" />
+          которые опережают конкурентов не бюджетом,<br className="hidden md:block" />
+          а качеством своих решений
         </p>
 
         <Button
