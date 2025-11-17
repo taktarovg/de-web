@@ -105,11 +105,28 @@ export default function SiteManagementPage() {
   };
 
   const pages = [
-    { path: '/', title: 'Главная страница', status: 'active' },
-    { path: '/navigator-2026', title: 'Интенсив "Навигатор 2026"', status: 'active' },
-    { path: '/beauty-leaders', title: 'Для лидеров бьюти-индустрии', status: 'active' },
-    { path: '/cases', title: 'Кейсы', status: 'draft' },
-    { path: '/georgiy-taktarov', title: 'О Георгии Тактарове', status: 'draft' },
+    // Основные страницы
+    { path: '/', title: 'Главная страница', status: 'active', category: 'Основное' },
+    { path: '/cases', title: 'Кейсы', status: 'active', category: 'Основное' },
+    
+    // Лендинги
+    { path: '/navigator-2026', title: 'Интенсив "Навигатор 2026"', status: 'active', category: 'Лендинги' },
+    { path: '/beauty-leaders', title: 'Для лидеров бьюти-индустрии', status: 'active', category: 'Лендинги' },
+    
+    // Страницы об авторе
+    { path: '/georgiy-taktarov', title: 'О Георгии Тактарове', status: 'active', category: 'Автор' },
+    { path: '/taktarov', title: 'Георгий Тактаров (альтернативная)', status: 'active', category: 'Автор' },
+    
+    // Сервисы и инструменты
+    { path: '/services', title: 'Услуги', status: 'active', category: 'Сервисы' },
+    { path: '/emotion-test', title: 'Тест эмоций (виджет)', status: 'active', category: 'Сервисы' },
+    { path: '/manifest', title: 'Манифест', status: 'active', category: 'Сервисы' },
+    
+    // Правовые страницы
+    { path: '/legal/offer', title: 'Публичная оферта', status: 'active', category: 'Правовые' },
+    { path: '/legal/privacy', title: 'Политика конфиденциальности', status: 'active', category: 'Правовые' },
+    { path: '/legal/refund', title: 'Политика возврата', status: 'active', category: 'Правовые' },
+    { path: '/legal/terms', title: 'Пользовательское соглашение', status: 'active', category: 'Правовые' },
   ];
 
   return (
@@ -386,50 +403,62 @@ export default function SiteManagementPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {pages.map((page) => (
-                  <div
-                    key={page.path}
-                    className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <Globe className="w-5 h-5 text-slate-400" />
-                        <div>
-                          <p className="font-medium text-slate-900">{page.title}</p>
-                          <p className="text-sm text-slate-500 font-mono">{page.path}</p>
-                        </div>
-                      </div>
-                    </div>
+              <div className="space-y-6">
+                {/* Группировка по категориям */}
+                {['Основное', 'Лендинги', 'Автор', 'Сервисы', 'Правовые'].map((category) => (
+                  <div key={category}>
+                    <h3 className="text-sm font-semibold text-slate-600 uppercase tracking-wider mb-3">
+                      {category}
+                    </h3>
+                    <div className="space-y-2">
+                      {pages
+                        .filter((page) => page.category === category)
+                        .map((page) => (
+                          <div
+                            key={page.path}
+                            className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                          >
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3">
+                                <Globe className="w-4 h-4 text-slate-400" />
+                                <div>
+                                  <p className="font-medium text-slate-900">{page.title}</p>
+                                  <p className="text-xs text-slate-500 font-mono">{page.path}</p>
+                                </div>
+                              </div>
+                            </div>
 
-                    <div className="flex items-center gap-3">
-                      <Badge
-                        variant={page.status === 'active' ? 'default' : 'secondary'}
-                        className={
-                          page.status === 'active'
-                            ? 'bg-green-100 text-green-800 border-green-200'
-                            : 'bg-slate-100 text-slate-600'
-                        }
-                      >
-                        {page.status === 'active' ? (
-                          <>
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Активна
-                          </>
-                        ) : (
-                          'Черновик'
-                        )}
-                      </Badge>
+                            <div className="flex items-center gap-3">
+                              <Badge
+                                variant={page.status === 'active' ? 'default' : 'secondary'}
+                                className={
+                                  page.status === 'active'
+                                    ? 'bg-green-100 text-green-800 border-green-200'
+                                    : 'bg-slate-100 text-slate-600'
+                                }
+                              >
+                                {page.status === 'active' ? (
+                                  <>
+                                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                                    Активна
+                                  </>
+                                ) : (
+                                  'Черновик'
+                                )}
+                              </Badge>
 
-                      <Button variant="outline" size="sm" asChild>
-                        <a
-                          href={`http://localhost:3000${page.path}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      </Button>
+                              <Button variant="outline" size="sm" asChild>
+                                <a
+                                  href={`http://localhost:3000${page.path}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <ExternalLink className="w-4 h-4" />
+                                </a>
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
                     </div>
                   </div>
                 ))}
@@ -442,7 +471,7 @@ export default function SiteManagementPage() {
               <CardTitle>Статистика</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="p-4 bg-slate-50 rounded-lg">
                   <p className="text-sm text-slate-600">Всего страниц</p>
                   <p className="text-3xl font-bold text-slate-900">{pages.length}</p>
@@ -453,12 +482,30 @@ export default function SiteManagementPage() {
                     {pages.filter((p) => p.status === 'active').length}
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 rounded-lg">
-                  <p className="text-sm text-slate-600">Черновиков</p>
-                  <p className="text-3xl font-bold text-slate-900">
-                    {pages.filter((p) => p.status === 'draft').length}
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-blue-600">Лендингов</p>
+                  <p className="text-3xl font-bold text-blue-900">
+                    {pages.filter((p) => p.category === 'Лендинги').length}
                   </p>
                 </div>
+                <div className="p-4 bg-purple-50 rounded-lg">
+                  <p className="text-sm text-purple-600">Категорий</p>
+                  <p className="text-3xl font-bold text-purple-900">
+                    {[...new Set(pages.map(p => p.category))].length}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Распределение по категориям */}
+              <div className="mt-6 grid grid-cols-2 lg:grid-cols-5 gap-3">
+                {['Основное', 'Лендинги', 'Автор', 'Сервисы', 'Правовые'].map((category) => (
+                  <div key={category} className="p-3 bg-white border border-slate-200 rounded-lg">
+                    <p className="text-xs text-slate-600 mb-1">{category}</p>
+                    <p className="text-xl font-bold text-slate-900">
+                      {pages.filter((p) => p.category === category).length}
+                    </p>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>

@@ -1,5 +1,6 @@
 import { Header, Footer } from '@/components/layout';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Mail, Send } from 'lucide-react';
 
 export const metadata = {
@@ -17,10 +18,17 @@ export default function GeorgiyPage() {
         <section className="py-24 bg-graphite">
           <div className="container mx-auto px-4 lg:px-8 max-w-5xl">
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              {/* Фото placeholder */}
+              {/* Фото Георгия */}
               <div className="flex justify-center md:justify-start">
-                <div className="w-80 h-80 rounded-lg bg-bronze/20 flex items-center justify-center border-2 border-bronze/50">
-                  <span className="text-9xl font-bold text-bronze">ГТ</span>
+                <div className="relative w-80 h-80 rounded-lg overflow-hidden border-2 border-bronze/50 shadow-2xl">
+                  <Image
+                    src="/images/georgiy-taktarov.webp"
+                    alt="Георгий Тактаров - Основатель метода Дизайн Эмоций"
+                    width={320}
+                    height={320}
+                    className="object-cover w-full h-full"
+                    priority
+                  />
                 </div>
               </div>
 
