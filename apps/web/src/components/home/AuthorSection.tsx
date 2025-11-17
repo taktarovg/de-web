@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AuthorSection() {
   return (
@@ -8,9 +9,18 @@ export default function AuthorSection() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Левая колонка: Фото */}
           <div className="flex justify-center">
-            <div className="w-72 h-72 rounded-lg bg-graphite/10 flex items-center justify-center border-2 border-bronze/30">
-              <span className="text-6xl font-bold text-bronze">ГТ</span>
-            </div>
+            <Link href="/georgiy-taktarov" className="block group">
+              <div className="relative w-72 h-72 rounded-lg overflow-hidden border-2 border-bronze/30 group-hover:border-bronze transition-all duration-300 shadow-lg group-hover:shadow-2xl">
+                <Image
+                  src="/images/georgiy-taktarov.webp"
+                  alt="Георгий Тактаров - Основатель метода Дизайн Эмоций"
+                  width={288}
+                  height={288}
+                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                  priority
+                />
+              </div>
+            </Link>
           </div>
 
           {/* Правая колонка: Текст */}
