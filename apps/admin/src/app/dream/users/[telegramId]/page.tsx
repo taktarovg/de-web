@@ -13,27 +13,233 @@ import {
   EmotionTrendChart
 } from '@/components/users/user-detail'
 import { MessageHistory } from '@/components/users/message-history'
+import { prisma } from '@designemotion/database'
+
+// Отключаем кэширование - данные всегда свежие
+export const revalidate = 0
 
 async function getUserDetails(telegramId: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
-  
   try {
-    const response = await fetch(`${API_URL}/api/users/${telegramId}`, {
-      cache: 'no-store',
-      headers: {
-        'Content-Type': 'application/json',
+    // Используем Prisma напрямую вместо fetch (оптимизация для Server Component)
+    const user = await prisma.user.findUnique({
+      where: { telegramId: BigInt(telegramId) },
+      select: {
+        id: true,
+        telegramId: true,
+        username: true,
+        firstName: true,
+        languageCode: true,
+        timezone: true,
+        isProgramActive: true,
+        totalCheckins: true,
+        totalSessions: true,
+        currentStreak: true,
+        longestStreak: true,
+        lastCheckinDate: true,
+        programStartDate: true,
+        currentMonth: true,
+        currentWeek: true,
+        createdAt: true,
+        updatedAt: true,
+        reminderEnabled: true,
+        reminderCount: true,
+        morningTime: true,
+        afternoonTime: true,
+        eveningTime: true,
       },
     })
-    
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null
-      }
-      throw new Error(`API error: ${response.status}`)
+
+    if (!user) {
+      return null
     }
-    
-    const data = await response.json()
-    return data.success ? data.data : null
+
+    // Статистика анализов
+    const analysisStats = await prisma.analysis.aggregate({
+      where: { userId: user.id },
+      _count: { id: true },
+      _avg: { emotionLevel: true },
+    })
+
+    const [last7DaysCount, last30DaysCount, uniqueDays] = await Promise.all([
+      prisma.analysis.count({
+        where: {
+          userId: user.id,
+          createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+        },
+      }),
+      prisma.analysis.count({
+        where: {
+          userId: user.id,
+          createdAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+        },
+      }),
+      prisma.$queryRaw<{ count: bigint }[]>`
+        SELECT COUNT(DISTINCT DATE(created_at)) as count
+        FROM analyses WHERE user_id = ${user.id}::uuid
+      `,
+    ])
+
+    // Распределение по категориям
+    const categoryDistribution = await prisma.analysis.groupBy({
+      by: ['emotionCategory'],
+      where: { userId: user.id },
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+    })
+
+    // Топ-5 эмоций
+    const topEmotions = await prisma.$queryRaw<any[]>`
+      SELECT 
+        e.name as emotion_name,
+        e.emoji as emotion_emoji,
+        e.category as category_name,
+        COUNT(a.id) as count,
+        AVG(a.emotion_level) as avg_level
+      FROM analyses a
+      INNER JOIN emotions e ON a.emotion_id = e.id
+      WHERE a.user_id = ${user.id}::uuid
+      GROUP BY e.name, e.emoji, e.category
+      ORDER BY COUNT(a.id) DESC
+      LIMIT 5
+    `
+
+    // Прогресс курса
+    const courseProgress = await prisma.courseProgress.findUnique({
+      where: { userId: user.id },
+    })
+
+    // Последние анализы
+    const recentAnalyses = await prisma.analysis.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+      take: 10,
+      select: {
+        id: true,
+        emotionId: true,
+        emotionLevel: true,
+        emotionCategory: true,
+        customEmotionText: true,
+        createdAt: true,
+        emotion: {
+          select: { name: true, emoji: true, category: true, level: true },
+        },
+      },
+    })
+
+    // График за 30 дней
+    const chartData = await prisma.$queryRaw<any[]>`
+      SELECT 
+        DATE(created_at) as date,
+        COUNT(id) as count,
+        AVG(emotion_level) as avg_level
+      FROM analyses
+      WHERE user_id = ${user.id}::uuid
+        AND created_at >= NOW() - INTERVAL '30 days'
+      GROUP BY DATE(created_at)
+      ORDER BY DATE(created_at) ASC
+    `
+
+    // Получаем метаданные категорий для emoji
+    const categories = await prisma.emotionCategory.findMany({
+      select: {
+        name: true,
+        emoji: true,
+      },
+    })
+    const categoryMap = Object.fromEntries(
+      categories.map(c => [c.name, c.emoji])
+    )
+
+    // Форматирование
+    return {
+      user: {
+        telegram_id: user.telegramId.toString(),
+        username: user.username || null,
+        first_name: user.firstName || null,
+        last_name: null, // Нет в схеме
+        full_name: user.firstName || 'Без имени',
+        language_code: user.languageCode || 'ru',
+        timezone: user.timezone || 'Europe/Moscow',
+        is_program_active: user.isProgramActive,
+        created_at: user.createdAt.toISOString(),
+        updated_at: user.updatedAt.toISOString(),
+      },
+      streaks: {
+        current_streak: user.currentStreak,
+        longest_streak: user.longestStreak,
+      },
+      reminders: {
+        enabled: user.reminderEnabled,
+        count: user.reminderCount,
+        morning_time: user.morningTime,
+        afternoon_time: user.afternoonTime,
+        evening_time: user.eveningTime,
+      },
+      analysis_stats: {
+        total: analysisStats._count.id,
+        last_7_days: last7DaysCount,
+        last_30_days: last30DaysCount,
+        unique_days: Number(uniqueDays[0]?.count || 0),
+        avg_level: Math.round(analysisStats._avg.emotionLevel || 0),
+      },
+      category_distribution: categoryDistribution.map(item => {
+        const categoryName = item.emotionCategory || 'unknown'
+        return {
+          category: categoryName,
+          category_name: categoryName,
+          category_emoji: categoryMap[categoryName] || '❓',
+          count: item._count.id,
+          avg_level: 0, // Будет вычислено позже если нужно
+          percentage: Math.round((item._count.id / analysisStats._count.id) * 100),
+        }
+      }),
+      top_emotions: topEmotions.map(e => ({
+        emotion_name: e.emotion_name,
+        emotion_emoji: e.emotion_emoji,
+        category_name: e.category_name,
+        count: Number(e.count),
+        avg_level: Math.round(Number(e.avg_level)),
+      })),
+      course_progress: courseProgress ? {
+        total_days: 21,
+        current_day: courseProgress.currentDay,
+        completed_days_count: courseProgress.completedDays.length,
+        completed_days: courseProgress.completedDays,
+        is_active: courseProgress.isActive,
+        started_at: courseProgress.startedAt.toISOString(),
+        completed_at: courseProgress.completedAt?.toISOString() || null,
+        total_lessons_completed: courseProgress.completedDays.length,
+        completion_percentage: courseProgress.completionPercentage,
+      } : {
+        total_days: 21,
+        current_day: 0,
+        completed_days_count: 0,
+        completed_days: [],
+        is_active: false,
+        started_at: null,
+        completed_at: null,
+        total_lessons_completed: 0,
+        completion_percentage: 0,
+      },
+      recent_analyses: recentAnalyses.map(a => {
+        const categoryName = a.emotionCategory || 'unknown'
+        return {
+          id: a.id,
+          emotion_id: a.emotionId || '',
+          emotion_name: a.emotion?.name || a.customEmotionText || 'Не указано',
+          emotion_emoji: a.emotion?.emoji || '❓',
+          emotion_level: a.emotionLevel || 0,
+          category_name: categoryName,
+          category_emoji: categoryMap[categoryName] || '❓',
+          created_at: a.createdAt?.toISOString() || new Date().toISOString(),
+        }
+      }),
+      chart_data: chartData.map(d => ({
+        date: d.date,
+        count: Number(d.count),
+        avg_level: Math.round(Number(d.avg_level || 0)),
+      })),
+    }
   } catch (error) {
     console.error('Error fetching user details:', error)
     return null
@@ -68,7 +274,7 @@ export default async function UserDetailPage({ params }: PageProps) {
         
         <SendMessageDialog 
           telegramId={params.telegramId} 
-          userName={user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : undefined}
+          userName={user.first_name || undefined}
         />
       </div>
 
