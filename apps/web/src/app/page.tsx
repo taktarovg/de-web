@@ -1,3 +1,4 @@
+// Проверка редактирования файла
 import { Header, Footer } from '@/components/layout';
 import {
   HeroSection,

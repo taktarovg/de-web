@@ -8,12 +8,41 @@ export async function POST() {
     const currentDate = new Date().toISOString();
 
     const pages = [
+      // Главная страница
       {
         url: '/',
         changefreq: 'weekly',
         priority: '1.0',
         lastmod: currentDate,
       },
+
+      // Основные страницы
+      {
+        url: '/emotion-test',
+        changefreq: 'monthly',
+        priority: '0.9',
+        lastmod: currentDate,
+      },
+      {
+        url: '/cases',
+        changefreq: 'monthly',
+        priority: '0.8',
+        lastmod: currentDate,
+      },
+      {
+        url: '/services',
+        changefreq: 'monthly',
+        priority: '0.8',
+        lastmod: currentDate,
+      },
+      {
+        url: '/manifest',
+        changefreq: 'monthly',
+        priority: '0.7',
+        lastmod: currentDate,
+      },
+
+      // Лендинги
       {
         url: '/navigator-2026',
         changefreq: 'monthly',
@@ -24,6 +53,46 @@ export async function POST() {
         url: '/beauty-leaders',
         changefreq: 'monthly',
         priority: '0.8',
+        lastmod: currentDate,
+      },
+
+      // Страницы автора
+      {
+        url: '/georgiy-taktarov',
+        changefreq: 'monthly',
+        priority: '0.7',
+        lastmod: currentDate,
+      },
+      {
+        url: '/taktarov',
+        changefreq: 'monthly',
+        priority: '0.7',
+        lastmod: currentDate,
+      },
+
+      // Юридические страницы
+      {
+        url: '/legal/terms',
+        changefreq: 'yearly',
+        priority: '0.3',
+        lastmod: currentDate,
+      },
+      {
+        url: '/legal/privacy',
+        changefreq: 'yearly',
+        priority: '0.3',
+        lastmod: currentDate,
+      },
+      {
+        url: '/legal/offer',
+        changefreq: 'yearly',
+        priority: '0.3',
+        lastmod: currentDate,
+      },
+      {
+        url: '/legal/refund',
+        changefreq: 'yearly',
+        priority: '0.3',
         lastmod: currentDate,
       },
     ];
