@@ -1,4 +1,4 @@
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 import { ApplicationsTable } from '@/components/applications/applications-table'
 import { Badge } from '@/components/ui/badge'
 import { FileText, Clock, CheckCircle2, XCircle } from 'lucide-react'

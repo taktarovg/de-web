@@ -4,9 +4,11 @@
   "private": true,
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "../packages/*"
   ],
   "scripts": {
+    "postinstall": "cd ../packages/database && npx prisma generate",
     "dev": "turbo run dev",
     "dev:web": "turbo run dev --filter=web",
     "dev:admin": "turbo run dev --filter=admin",
@@ -15,9 +17,9 @@
     "build:admin": "turbo run build --filter=admin",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "db:generate": "cd packages/database && npx prisma generate",
-    "db:push": "cd packages/database && npx prisma db push",
-    "db:studio": "cd packages/database && npx prisma studio"
+    "db:generate": "cd ../packages/database && npx prisma generate",
+    "db:push": "cd ../packages/database && npx prisma db push",
+    "db:studio": "cd ../packages/database && npx prisma studio"
   },
   "devDependencies": {
     "prettier": "^3.1.0",

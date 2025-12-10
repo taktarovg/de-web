@@ -1,4 +1,4 @@
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 import { BroadcastsPageClient } from '@/components/broadcasts/broadcasts-page-client'
 
 // Отключаем кэширование - данные будут всегда свежими

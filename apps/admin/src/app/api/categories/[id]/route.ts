@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 
 // GET /api/categories/:id - Получить категорию
 export async function GET(
@@ -92,8 +92,8 @@ export async function PUT(
       data: updateData,
     })
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: updatedCategory,
       message: 'Категория успешно обновлена'
     })

@@ -13,7 +13,7 @@ import {
   EmotionTrendChart
 } from '@/components/users/user-detail'
 import { MessageHistory } from '@/components/users/message-history'
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 
 // Отключаем кэширование - данные всегда свежие
 export const revalidate = 0

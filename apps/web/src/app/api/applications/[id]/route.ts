@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@designemotion/database';
+import { prisma } from '@ecosystem/database';
 
 // PATCH /api/applications/:id - обновить статус заявки
 export async function PATCH(

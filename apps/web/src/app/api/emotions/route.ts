@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@designemotion/database';
+import { prisma } from '@ecosystem/database';
 
 /**
  * GET /api/emotions - Получить все эмоции
@@ -42,9 +42,9 @@ export async function POST(request: NextRequest) {
     // Валидация обязательных полей
     if (!name || !emoji || !category || level === undefined) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Missing required fields: name, emoji, category, level' 
+        {
+          success: false,
+          error: 'Missing required fields: name, emoji, category, level'
         },
         { status: 400 }
       );

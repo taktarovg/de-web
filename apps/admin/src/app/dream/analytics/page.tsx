@@ -1,4 +1,4 @@
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 import { AnalyticsPageClient } from '@/components/analytics/analytics-page-client'
 import { subDays, format } from 'date-fns'
 

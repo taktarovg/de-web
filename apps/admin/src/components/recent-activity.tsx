@@ -1,4 +1,4 @@
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 import { formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
 

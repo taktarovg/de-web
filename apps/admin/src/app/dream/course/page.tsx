@@ -1,4 +1,4 @@
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 import { CoursePageClient } from '@/components/course/course-page-client'
 import { subDays } from 'date-fns'
 

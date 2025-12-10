@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 
 export async function POST(request: Request) {
   try {
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     // Отправляем запрос на бот для начала рассылки
     // Бот будет постепенно отправлять сообщения и обновлять статусы
     const botWebhookUrl = process.env.BOT_WEBHOOK_URL || 'http://localhost:3002'
-    
+
     try {
       await fetch(`${botWebhookUrl}/api/broadcast/start`, {
         method: 'POST',

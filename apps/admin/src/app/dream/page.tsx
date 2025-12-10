@@ -1,4 +1,4 @@
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 import { StatsCard } from '@/components/stats-card'
 import { RecentActivity } from '@/components/recent-activity'
 import { Users, Heart, BookOpen, TrendingUp } from 'lucide-react'

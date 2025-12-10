@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@designemotion/database';
+import { prisma } from '@ecosystem/database';
 
 // POST /api/applications - создать заявку
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Валидация
     const { name, company, contact, request: userRequest } = body;
-    
+
     if (!name || !contact || !userRequest) {
       return NextResponse.json(
         { success: false, error: 'Заполните все обязательные поля' },

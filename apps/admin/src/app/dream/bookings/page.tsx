@@ -1,4 +1,4 @@
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 import { BookingsTable } from '@/components/bookings/bookings-table'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Clock, DollarSign, CheckCircle2 } from 'lucide-react'

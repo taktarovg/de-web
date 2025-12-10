@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 
 export async function GET(
   request: Request,
@@ -33,9 +33,9 @@ export async function GET(
 
     if (!user) {
       return NextResponse.json(
-        { 
+        {
           success: false,
-          error: 'User not found' 
+          error: 'User not found'
         },
         { status: 404 }
       )
@@ -94,9 +94,9 @@ export async function GET(
   } catch (error) {
     console.error('Error fetching admin messages:', error)
     return NextResponse.json(
-      { 
+      {
         success: false,
-        error: 'Failed to fetch messages' 
+        error: 'Failed to fetch messages'
       },
       { status: 500 }
     )

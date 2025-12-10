@@ -1,4 +1,4 @@
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 import { Button } from '@/components/ui/button'
 import { Plus, Users as UsersIcon } from 'lucide-react'
 import { UsersTable } from '@/components/users/users-table'

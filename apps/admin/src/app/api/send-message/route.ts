@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 
 // Telegram Bot API URL
 const TELEGRAM_BOT_TOKEN = process.env.BOT_TOKEN
@@ -8,7 +8,7 @@ const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`
 // POST - Отправка сообщения пользователю через Telegram Bot API с сохранением в БД
 export async function POST(request: NextRequest) {
   let bodyData: any = null
-  
+
   try {
     // Читаем body ОДИН раз и сохраняем
     bodyData = await request.json()
@@ -88,8 +88,8 @@ export async function POST(request: NextRequest) {
     if (!result.ok) {
       console.error('❌ Ошибка отправки сообщения:', result)
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: result.description || 'Не удалось отправить сообщение',
           savedToDb: true,
           messageId: adminMessage.id
@@ -117,16 +117,16 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     console.error('❌ Ошибка в send-message API:', error)
-    
+
     // Попытка сохранить неудачную попытку в БД (используем сохранённый bodyData)
     try {
       if (bodyData && bodyData.telegramId) {
         const { telegramId, message, adminId = 'admin' } = bodyData
-        
+
         const user = await prisma.user.findUnique({
           where: { telegramId: BigInt(telegramId) }
         })
-        
+
         if (user) {
           await prisma.adminMessage.create({
             data: {
@@ -142,10 +142,10 @@ export async function POST(request: NextRequest) {
     } catch (dbError) {
       console.error('❌ Не удалось сохранить ошибку в БД:', dbError)
     }
-    
+
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: error.message || 'Внутренняя ошибка сервера'
       },
       { status: 500 }

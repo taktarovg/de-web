@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@designemotion/database'
+import { prisma } from '@ecosystem/database'
 
 // GET /api/emotions - Получить все эмоции
 export async function GET(request: NextRequest) {
@@ -9,11 +9,11 @@ export async function GET(request: NextRequest) {
     const isActive = searchParams.get('isActive')
 
     const where: any = {}
-    
+
     if (category) {
       where.category = category.toLowerCase()
     }
-    
+
     if (isActive !== null && isActive !== undefined) {
       where.isActive = isActive === 'true'
     }
@@ -108,8 +108,8 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json(
-      { 
-        success: true, 
+      {
+        success: true,
         data: newEmotion,
         message: 'Эмоция успешно создана'
       },
