@@ -78,7 +78,9 @@ export default function Footer() {
             Моя открытая методология и инструменты:
           </p>
           <Link 
-            href="/"
+            href="https://diaryofemotions.ru"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-bronze hover:text-bronze-light transition-colors"
           >
             <span className="text-lg">→</span>
